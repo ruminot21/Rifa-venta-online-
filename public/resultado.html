@@ -1,0 +1,13 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Resultado del pago</title>
+<style>body{font-family:system-ui;background:#07111f;color:#eef4ff;display:grid;place-items:center;min-height:100vh}.card{max-width:520px;padding:30px;border-radius:22px;background:#111c30;text-align:center}.ok{color:#4ade80}.wait{color:#fbbf24}.bad{color:#fb7185}</style></head>
+<body><div class="card"><h1 id="title">Verificando pago...</h1><p id="text"></p></div>
+<script>
+const q=new URLSearchParams(location.search),id=q.get("orden"),estado=q.get("estado");
+const title=document.querySelector("#title"),text=document.querySelector("#text");
+async function run(){
+ if(estado==="success"){title.className="ok";title.textContent="✅ Pago recibido";text.textContent="Tu pago fue informado. La confirmación definitiva se realiza mediante la notificación de Mercado Pago."}
+ else if(estado==="pending"){title.className="wait";title.textContent="🕒 Pago pendiente";text.textContent="Mercado Pago aún no confirma el pago."}
+ else {title.className="bad";title.textContent="❌ Pago no completado";text.textContent="La operación no fue aprobada."}
+ if(id){try{const r=await fetch("/api/order/"+encodeURIComponent(id));if(r.ok){const o=await r.json();text.textContent+=` Orden ${o.id}. Números: ${o.numbers.map(n=>String(n).padStart(3,"0")).join(", ")}.`}}catch(e){}}
+}run();
+</script></body></html>
