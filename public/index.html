@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Rifa Online - Comprar números</title>
+<style>
+body{font-family:system-ui;margin:0;background:#07111f;color:#eef4ff}
+.wrap{max-width:1050px;margin:auto;padding:24px}
+.card{background:#111c30;border:1px solid #263854;border-radius:20px;padding:22px;margin-bottom:18px}
+h1{margin:0 0 8px} .muted{color:#9fb0c8}
+.grid{display:grid;grid-template-columns:1fr 320px;gap:18px}
+.numbers{display:grid;grid-template-columns:repeat(auto-fill,minmax(54px,1fr));gap:8px}
+.num{height:48px;border-radius:12px;border:1px solid #263854;background:#0c172a;color:white;font-weight:800}
+.num.selected{background:#21d4a3;color:#03111b}
+.num.sold{background:#263238;color:#8fa0ae;cursor:not-allowed}
+input{width:100%;box-sizing:border-box;padding:12px;border-radius:10px;border:1px solid #263854;background:#081326;color:white;margin:6px 0 12px}
+button.pay{width:100%;padding:14px;border:0;border-radius:12px;background:#21d4a3;font-weight:900;cursor:pointer}
+.total{font-size:25px;font-weight:900;margin:14px 0}
+.notice{padding:12px;border-radius:10px;background:#10243b;margin-top:10px}
+@media(max-width:800px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+    <h1 id="raffleName">Rifa Online</h1>
+    <div class="muted">Selecciona tus números y paga de forma segura con Mercado Pago.</div>
+  </div>
+  <div class="grid">
+    <div class="card">
+      <h2>Números</h2>
+      <div class="numbers" id="numbers"></div>
+    </div>
+    <div class="card">
+      <h2>Tus datos</h2>
+      <input id="name" placeholder="Nombre completo" required>
+      <input id="email" type="email" placeholder="Correo electrónico" required>
+      <input id="phone" placeholder="WhatsApp / teléfono">
+      <input id="rut" placeholder="RUT">
+      <div class="notice">Números seleccionados: <b id="selected">Ninguno</b></div>
+      <div class="total" id="total">$0</div>
+      <button class="pay" id="pay">Pagar con Mercado Pago</button>
+      <div class="notice muted" id="msg"></div>
+    </div>
+  </div>
+</div>
+<script>
+const state={totalNumbers:100,ticketValue:5000,raffleName:"Rifa Online"};
+let selected=[];
+const money=n=>new Intl.NumberFormat("es-CL",{style:"currency",currency:"CLP",maximumFractionDigits:0}).format(n);
+async function load(){
+  try{
+    const r=await fetch("/api/raffle");
+    if(r.ok) Object.assign(state,await r.json());
+  }catch(e){}
+  document.querySelector("#raffleName").textContent=state.raffleName||"Rifa Online";
+  render();
+}
+async function render(){
+  let sold=[];
+  try{const r=await fetch("/api/numbers"); if(r.ok) sold=await r.json()}catch(e){}
+  const box=document.querySelector("#numbers"); box.innerHTML="";
+  for(let i=1;i<=state.totalNumbers;i++){
+    const b=document.createElement("button"); b.className="num"; b.textContent=String(i).padStart(3,"0");
+    if(sold.includes(i)){b.classList.add("sold");b.disabled=true}
+    else if(selected.includes(i))b.classList.add("selected");
+    b.onclick=()=>{selected=selected.includes(i)?selected.filter(x=>x!==i):[...selected,i];render()};
+    box.appendChild(b);
+  }
+  document.querySelector("#selected").textContent=selected.length?selected.map(x=>String(x).padStart(3,"0")).join(", "):"Ninguno";
+  document.querySelector("#total").textContent=money(selected.length*state.ticketValue);
+}
+document.querySelector("#pay").onclick=async()=>{
+  const name=document.querySelector("#name").value.trim(),email=document.querySelector("#email").value.trim();
+  if(!name||!email||!selected.length){document.querySelector("#msg").textContent="Completa nombre, correo y selecciona al menos un número.";return}
+  document.querySelector("#pay").disabled=true; document.querySelector("#msg").textContent="Creando pago...";
+  try{
+    const r=await fetch("/api/create-preference",{method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({name,email,phone:document.querySelector("#phone").value.trim(),rut:document.querySelector("#rut").value.trim(),numbers:selected})});
+    const data=await r.json();
+    if(!r.ok) throw new Error(data.error||"No fue posible crear el pago");
+    location.href=data.init_point;
+  }catch(e){document.querySelector("#msg").textContent=e.message;document.querySelector("#pay").disabled=false}
+};
+load();
+</script>
+</body>
+</html>

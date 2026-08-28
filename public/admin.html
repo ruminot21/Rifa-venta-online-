@@ -1,0 +1,2154 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rifa Online</title>
+  <style>
+    :root{
+      --bg:#08111f;
+      --card:#111c30;
+      --card2:#16243b;
+      --line:#263854;
+      --text:#eef4ff;
+      --muted:#9fb0c8;
+      --primary:#21d4a3;
+      --primary2:#0ea5e9;
+      --danger:#ef4444;
+      --warning:#f59e0b;
+      --ok:#22c55e;
+      --purple:#a855f7;
+      --shadow:0 20px 45px rgba(0,0,0,.35);
+      --radius:22px;
+    }
+
+    *{
+      box-sizing:border-box;
+      margin:0;
+      padding:0;
+      font-family:Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    body{
+      min-height:100vh;
+      background:
+        radial-gradient(circle at top left, rgba(14,165,233,.28), transparent 35%),
+        radial-gradient(circle at bottom right, rgba(33,212,163,.20), transparent 30%),
+        linear-gradient(135deg, var(--bg), #050914 70%);
+      color:var(--text);
+      padding:24px;
+    }
+
+    .app{
+      max-width:1280px;
+      margin:auto;
+    }
+
+    .header{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:16px;
+      margin-bottom:22px;
+      padding:24px;
+      border:1px solid rgba(255,255,255,.08);
+      background:linear-gradient(135deg, rgba(17,28,48,.95), rgba(22,36,59,.82));
+      box-shadow:var(--shadow);
+      border-radius:var(--radius);
+    }
+
+    .header h1{
+      font-size:clamp(24px, 4vw, 42px);
+      letter-spacing:-1px;
+      line-height:1.05;
+    }
+
+    .header p{
+      color:var(--muted);
+      margin-top:8px;
+      font-size:15px;
+    }
+
+    .badge{
+      padding:12px 16px;
+      border-radius:999px;
+      background:rgba(33,212,163,.12);
+      border:1px solid rgba(33,212,163,.35);
+      color:#b7ffe9;
+      white-space:nowrap;
+      font-weight:700;
+    }
+
+    .tabs{
+      display:flex;
+      gap:10px;
+      overflow-x:auto;
+      padding:10px;
+      margin-bottom:20px;
+      background:rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:20px;
+    }
+
+    .tab-btn{
+      border:0;
+      cursor:pointer;
+      color:var(--muted);
+      background:transparent;
+      padding:13px 18px;
+      border-radius:15px;
+      font-weight:800;
+      letter-spacing:.2px;
+      transition:.25s ease;
+      white-space:nowrap;
+    }
+
+    .tab-btn:hover{
+      background:rgba(255,255,255,.07);
+      color:var(--text);
+    }
+
+    .tab-btn.active{
+      background:linear-gradient(135deg, var(--primary), var(--primary2));
+      color:#03111b;
+      box-shadow:0 10px 28px rgba(14,165,233,.25);
+    }
+
+    .tab-content{
+      display:none;
+      animation:fade .25s ease;
+    }
+
+    .tab-content.active{
+      display:block;
+    }
+
+    @keyframes fade{
+      from{opacity:0; transform:translateY(8px)}
+      to{opacity:1; transform:translateY(0)}
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns:380px 1fr;
+      gap:20px;
+    }
+
+    .card{
+      background:linear-gradient(180deg, rgba(17,28,48,.96), rgba(12,20,35,.96));
+      border:1px solid rgba(255,255,255,.09);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:22px;
+    }
+
+    .card h2{
+      font-size:22px;
+      margin-bottom:6px;
+    }
+
+    .card h3{
+      font-size:18px;
+      margin-bottom:10px;
+    }
+
+    .help{
+      color:var(--muted);
+      font-size:14px;
+      margin-bottom:18px;
+      line-height:1.45;
+    }
+
+    .form-group{
+      margin-bottom:15px;
+    }
+
+    label{
+      display:block;
+      font-weight:800;
+      margin-bottom:7px;
+      font-size:14px;
+      color:#dbeafe;
+    }
+
+    input, textarea, select{
+      width:100%;
+      background:#081326;
+      color:var(--text);
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:13px 14px;
+      outline:none;
+      font-size:15px;
+      transition:.2s ease;
+    }
+
+    input:focus, textarea:focus, select:focus{
+      border-color:var(--primary2);
+      box-shadow:0 0 0 4px rgba(14,165,233,.12);
+    }
+
+    textarea{
+      min-height:82px;
+      resize:vertical;
+    }
+
+    .btn-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:12px;
+    }
+
+    .btn{
+      border:0;
+      cursor:pointer;
+      padding:13px 16px;
+      border-radius:14px;
+      font-weight:900;
+      transition:.2s ease;
+      color:#04131d;
+      background:linear-gradient(135deg, var(--primary), var(--primary2));
+      box-shadow:0 12px 24px rgba(14,165,233,.18);
+    }
+
+    .btn:hover{
+      transform:translateY(-1px);
+      filter:brightness(1.06);
+    }
+
+    .btn:disabled{
+      opacity:.55;
+      cursor:not-allowed;
+      transform:none;
+    }
+
+    .btn.secondary{
+      background:#1f2f4a;
+      color:var(--text);
+      box-shadow:none;
+      border:1px solid var(--line);
+    }
+
+    .btn.danger{
+      background:linear-gradient(135deg, #fb7185, var(--danger));
+      color:white;
+    }
+
+    .btn.warning{
+      background:linear-gradient(135deg, #fde047, var(--warning));
+      color:#1a1100;
+    }
+
+    .stats{
+      display:grid;
+      grid-template-columns:repeat(auto-fit, minmax(150px,1fr));
+      gap:12px;
+      margin-bottom:18px;
+    }
+
+    .stat{
+      padding:16px;
+      border-radius:18px;
+      background:rgba(255,255,255,.055);
+      border:1px solid rgba(255,255,255,.08);
+    }
+
+    .stat span{
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    .stat strong{
+      display:block;
+      font-size:26px;
+      margin-top:4px;
+    }
+
+    .numbers-toolbar{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      justify-content:space-between;
+      margin-bottom:14px;
+      flex-wrap:wrap;
+    }
+
+    .selected-box{
+      background:rgba(33,212,163,.1);
+      border:1px solid rgba(33,212,163,.25);
+      color:#b7ffe9;
+      border-radius:14px;
+      padding:11px 13px;
+      font-weight:800;
+      min-height:44px;
+      flex:1;
+    }
+
+    .number-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fill, minmax(56px,1fr));
+      gap:10px;
+      max-height:570px;
+      overflow:auto;
+      padding:4px 4px 8px;
+    }
+
+    .num{
+      height:48px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background:#0c172a;
+      color:var(--text);
+      cursor:pointer;
+      font-weight:900;
+      transition:.18s ease;
+    }
+
+    .num:hover{
+      border-color:var(--primary2);
+      transform:scale(1.04);
+    }
+
+    .num.selected{
+      background:linear-gradient(135deg, var(--primary), var(--primary2));
+      color:#04131d;
+      border-color:transparent;
+      box-shadow:0 10px 20px rgba(33,212,163,.20);
+    }
+
+    .num.sold-paid{
+      background:#193627;
+      border-color:#22c55e;
+      color:#bbf7d0;
+      cursor:not-allowed;
+      opacity:.88;
+    }
+
+    .num.sold-pending{
+      background:#4a3308;
+      border-color:#f59e0b;
+      color:#fde68a;
+      cursor:not-allowed;
+      opacity:.95;
+    }
+
+    .legend{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-bottom:14px;
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    .legend-item{
+      display:flex;
+      align-items:center;
+      gap:6px;
+    }
+
+    .dot{
+      width:12px;
+      height:12px;
+      border-radius:50%;
+      display:inline-block;
+    }
+
+    .dot.free{background:#0c172a; border:1px solid var(--line)}
+    .dot.paid{background:#22c55e}
+    .dot.pending{background:#f59e0b}
+    .dot.selected{background:#21d4a3}
+    .dot.water{background:#a855f7}
+
+    .table-wrap{
+      overflow:auto;
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:18px;
+    }
+
+    table{
+      width:100%;
+      border-collapse:collapse;
+      min-width:860px;
+    }
+
+    th,td{
+      padding:14px;
+      text-align:left;
+      border-bottom:1px solid rgba(255,255,255,.07);
+      vertical-align:top;
+    }
+
+    th{
+      background:#0b1629;
+      color:#bfdbfe;
+      font-size:13px;
+      text-transform:uppercase;
+      letter-spacing:.6px;
+    }
+
+    td{
+      color:#e8f1ff;
+      font-size:14px;
+    }
+
+    tr.row-pending{
+      background:rgba(245,158,11,.10);
+    }
+
+    tr.row-paid{
+      background:rgba(34,197,94,.045);
+    }
+
+    .chip{
+      display:inline-block;
+      padding:6px 9px;
+      margin:2px;
+      border-radius:999px;
+      background:rgba(14,165,233,.12);
+      border:1px solid rgba(14,165,233,.25);
+      color:#bae6fd;
+      font-weight:800;
+      font-size:12px;
+    }
+
+    .chip.pending{
+      background:rgba(245,158,11,.18);
+      border-color:rgba(245,158,11,.55);
+      color:#fde68a;
+    }
+
+    .chip.paid{
+      background:rgba(34,197,94,.14);
+      border-color:rgba(34,197,94,.45);
+      color:#bbf7d0;
+    }
+
+    .chip.winner{
+      background:rgba(34,197,94,.18);
+      border-color:rgba(34,197,94,.62);
+      color:#bbf7d0;
+    }
+
+    .chip.water{
+      background:rgba(168,85,247,.18);
+      border-color:rgba(168,85,247,.62);
+      color:#e9d5ff;
+    }
+
+    .status-select{
+      min-width:140px;
+      font-weight:900;
+    }
+
+    .status-select.pending{
+      background:#4a3308;
+      border-color:#f59e0b;
+      color:#fde68a;
+    }
+
+    .status-select.paid{
+      background:#123320;
+      border-color:#22c55e;
+      color:#bbf7d0;
+    }
+
+    .toast{
+      position:fixed;
+      right:24px;
+      bottom:24px;
+      padding:15px 18px;
+      background:linear-gradient(135deg, var(--ok), #14b8a6);
+      color:#03111b;
+      border-radius:16px;
+      box-shadow:var(--shadow);
+      font-weight:900;
+      opacity:0;
+      pointer-events:none;
+      transform:translateY(18px);
+      transition:.28s ease;
+      z-index:20;
+    }
+
+    .toast.show{
+      opacity:1;
+      transform:translateY(0);
+    }
+
+    .draw-layout{
+      display:grid;
+      grid-template-columns:330px 1fr;
+      gap:22px;
+      align-items:center;
+      margin-top:18px;
+    }
+
+    .tombola{
+      position:relative;
+      width:260px;
+      height:260px;
+      margin:auto;
+      border-radius:50%;
+      background:
+        radial-gradient(circle at 35% 30%, rgba(255,255,255,.35), transparent 15%),
+        radial-gradient(circle, rgba(14,165,233,.22), rgba(33,212,163,.12) 48%, rgba(255,255,255,.06) 49%, rgba(255,255,255,.02) 70%);
+      border:8px solid rgba(255,255,255,.18);
+      box-shadow:inset 0 0 35px rgba(255,255,255,.10), 0 22px 45px rgba(0,0,0,.35);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      overflow:hidden;
+    }
+
+    .tombola::before,
+    .tombola::after{
+      content:'';
+      position:absolute;
+      width:46px;
+      height:46px;
+      border-radius:50%;
+      background:rgba(245,158,11,.85);
+      box-shadow:
+        70px 28px 0 rgba(33,212,163,.85),
+        -62px 42px 0 rgba(14,165,233,.85),
+        36px -70px 0 rgba(239,68,68,.80),
+        -36px -58px 0 rgba(168,85,247,.82),
+        4px 78px 0 rgba(34,197,94,.82);
+      opacity:.75;
+    }
+
+    .tombola::after{
+      transform:rotate(60deg) scale(.78);
+      opacity:.55;
+    }
+
+    .tombola.spinning::before{
+      animation:spinBalls .55s linear infinite;
+    }
+
+    .tombola.spinning::after{
+      animation:spinBallsReverse .8s linear infinite;
+    }
+
+    @keyframes spinBalls{
+      to{transform:rotate(360deg)}
+    }
+
+    @keyframes spinBallsReverse{
+      to{transform:rotate(-360deg) scale(.78)}
+    }
+
+    .draw-number{
+      position:relative;
+      z-index:2;
+      width:112px;
+      height:112px;
+      border-radius:50%;
+      background:linear-gradient(135deg, #ffffff, #dbeafe);
+      color:#06111f;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:42px;
+      font-weight:1000;
+      box-shadow:0 16px 35px rgba(0,0,0,.35);
+      border:6px solid rgba(255,255,255,.55);
+    }
+
+    .draw-number.water-mode{
+      background:linear-gradient(135deg, #f3e8ff, #c084fc);
+      color:#250d42;
+    }
+
+    .draw-number.winner-mode{
+      background:linear-gradient(135deg, #dcfce7, #22c55e);
+      color:#03170b;
+    }
+
+    .winner-box{
+      text-align:center;
+      padding:30px;
+      border-radius:22px;
+      background:linear-gradient(135deg, rgba(33,212,163,.12), rgba(14,165,233,.10));
+      border:1px solid rgba(255,255,255,.10);
+    }
+
+    .winner-number{
+      font-size:68px;
+      font-weight:1000;
+      line-height:1;
+      margin:10px 0;
+      background:linear-gradient(135deg, var(--primary), #93c5fd);
+      -webkit-background-clip:text;
+      color:transparent;
+    }
+
+    .draw-results{
+      display:grid;
+      grid-template-columns:1.3fr .9fr;
+      gap:18px;
+      margin-top:22px;
+    }
+
+    .result-panel{
+      background:rgba(255,255,255,.045);
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:20px;
+      padding:18px;
+      min-height:160px;
+    }
+
+    .winner-list{
+      display:grid;
+      gap:10px;
+    }
+
+    .winner-card{
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:16px;
+      padding:13px;
+      background:rgba(8,19,38,.70);
+    }
+
+    .winner-card strong{
+      display:block;
+      font-size:16px;
+      margin-bottom:5px;
+    }
+
+    .winner-card small{
+      display:block;
+      color:var(--muted);
+      line-height:1.45;
+    }
+
+    .water-list{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      align-content:flex-start;
+    }
+
+    .draw-date{
+      color:var(--muted);
+      font-size:12px;
+      margin-bottom:10px;
+    }
+
+    .empty{
+      padding:24px;
+      text-align:center;
+      color:var(--muted);
+    }
+
+    .settings-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit, minmax(210px,1fr));
+      gap:16px;
+    }
+
+
+
+    .header-actions{
+      display:flex;
+      flex-direction:column;
+      align-items:flex-end;
+      gap:9px;
+    }
+
+    .firebase-status{
+      font-size:12px;
+      font-weight:800;
+      color:var(--muted);
+      max-width:260px;
+      text-align:right;
+    }
+
+    .firebase-status.online{color:#86efac}
+    .firebase-status.connecting{color:#fde68a}
+    .firebase-status.error{color:#fda4af}
+
+    .logout-btn{
+      border:1px solid var(--line);
+      background:#0c172a;
+      color:var(--text);
+      border-radius:12px;
+      padding:9px 12px;
+      cursor:pointer;
+      font-weight:800;
+    }
+
+    .auth-overlay{
+      position:fixed;
+      inset:0;
+      z-index:100;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:20px;
+      background:rgba(3,8,18,.88);
+      backdrop-filter:blur(10px);
+    }
+
+    .auth-overlay[hidden]{display:none}
+
+    .auth-card{
+      width:min(430px, 100%);
+      background:linear-gradient(180deg, rgba(17,28,48,.99), rgba(8,17,31,.99));
+      border:1px solid rgba(255,255,255,.12);
+      border-radius:24px;
+      box-shadow:var(--shadow);
+      padding:26px;
+    }
+
+    .auth-card h2{margin-bottom:8px}
+    .auth-error{
+      min-height:20px;
+      margin-top:12px;
+      color:#fda4af;
+      font-size:13px;
+      font-weight:700;
+    }
+
+    @media print{
+      body{background:white; color:black; padding:0}
+      .header,.tabs,#registro,#sorteo,#configuracion,.btn-row,.form-group{display:none !important}
+      #participantes{display:block !important}
+      .card{box-shadow:none; border:0; color:black; background:white}
+      table{min-width:100%; color:black}
+      th,td{color:black; border-color:#ddd}
+      th{background:#f2f2f2; color:black}
+      .chip{color:black; border-color:#999; background:white}
+      .status-select{border:0; color:black; background:white}
+    }
+
+    @media(max-width:980px){
+      .grid,.draw-layout,.draw-results{grid-template-columns:1fr}
+      .header{align-items:flex-start; flex-direction:column}
+    }
+
+    @media(max-width:560px){
+      body{padding:14px}
+      .number-grid{grid-template-columns:repeat(auto-fill, minmax(48px,1fr))}
+      .num{height:44px}
+      .tombola{width:220px; height:220px}
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <section class="header">
+      <div>
+        <h1>Rifa Online</h1>
+        <p>Registro de participantes, selección múltiple, control de pagos, tómbola, ganadores y números al agua.</p>
+      </div>
+      <div class="header-actions">
+        <div class="badge" id="raffleNameBadge">Rifa activa</div>
+        <div class="firebase-status" id="firebaseStatus">Modo local</div>
+        <button class="logout-btn" id="logoutBtn" type="button" hidden>Cerrar sesión</button>
+      </div>
+    </section>
+
+    <nav class="tabs">
+      <button class="tab-btn active" data-tab="registro" type="button">Registro de participantes</button>
+      <button class="tab-btn" data-tab="participantes" type="button">Participantes</button>
+      <button class="tab-btn" data-tab="sorteo" type="button">Sorteo</button>
+      <button class="tab-btn" data-tab="configuracion" type="button">Configuración</button>
+    </nav>
+
+    <section id="registro" class="tab-content active">
+      <div class="stats">
+        <div class="stat"><span>Total números</span><strong id="stTotal">100</strong></div>
+        <div class="stat"><span>Vendidos</span><strong id="stSold">0</strong></div>
+        <div class="stat"><span>Disponibles</span><strong id="stFree">100</strong></div>
+        <div class="stat"><span>Participantes</span><strong id="stPeople">0</strong></div>
+        <div class="stat"><span>Valor número</span><strong id="stValue">$0</strong></div>
+        <div class="stat"><span>Total vendido</span><strong id="stRevenue">$0</strong></div>
+      </div>
+
+      <div class="grid">
+        <div class="card">
+          <h2>Datos del participante</h2>
+          <p class="help">Completa los datos y selecciona uno o varios números disponibles.</p>
+
+          <form id="participantForm">
+            <div class="form-group">
+              <label for="name">Nombre completo *</label>
+              <input id="name" type="text" placeholder="Ej: Juan Pérez" required />
+            </div>
+
+            <div class="form-group">
+              <label for="phone">Teléfono / WhatsApp</label>
+              <input id="phone" type="tel" placeholder="Ej: +56 9 1234 5678" />
+            </div>
+
+            <div class="form-group">
+              <label for="payment">Estado de pago</label>
+              <select id="payment">
+                <option value="Pagado">Pagado</option>
+                <option value="Pendiente">Pendiente</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="note">Observación</label>
+              <textarea id="note" placeholder="Notas opcionales"></textarea>
+            </div>
+
+            <div class="form-group">
+              <label>Números seleccionados *</label>
+              <div class="selected-box" id="selectedText">Ningún número seleccionado</div>
+            </div>
+
+            <div class="btn-row">
+              <button class="btn" type="submit">Guardar participante</button>
+              <button class="btn secondary" type="button" id="clearSelectionBtn">Limpiar selección</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="card">
+          <div class="numbers-toolbar">
+            <div>
+              <h2>Números de la rifa</h2>
+              <p class="help">Puedes elegir varios números antes de guardar.</p>
+            </div>
+            <div class="btn-row">
+              <button class="btn secondary" id="selectRandomBtn" type="button">Elegir aleatorio</button>
+              <button class="btn secondary" id="selectFreeBtn" type="button">Primeros libres</button>
+            </div>
+          </div>
+
+          <div class="legend">
+            <span class="legend-item"><span class="dot free"></span>Disponible</span>
+            <span class="legend-item"><span class="dot selected"></span>Seleccionado</span>
+            <span class="legend-item"><span class="dot paid"></span>Pagado</span>
+            <span class="legend-item"><span class="dot pending"></span>Pendiente</span>
+          </div>
+
+          <div class="number-grid" id="numberGrid"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="participantes" class="tab-content">
+      <div class="card">
+        <div class="numbers-toolbar">
+          <div>
+            <h2>Lista de participantes</h2>
+            <p class="help">Consulta, cambia el estado de pago, elimina o imprime el registro de la rifa.</p>
+          </div>
+          <div class="btn-row">
+            <button class="btn secondary" id="exportBtn" type="button">Exportar CSV</button>
+            <button class="btn secondary" id="printBtn" type="button">Imprimir</button>
+            <button class="btn danger" id="clearTableBtn" type="button">Vaciar tabla</button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="search">Buscar participante o número</label>
+          <input id="search" type="search" placeholder="Buscar por nombre, teléfono, estado o número..." />
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Nombre</th>
+                <th>Teléfono</th>
+                <th>Números</th>
+                <th>Pago</th>
+                <th>Total</th>
+                <th>Fecha</th>
+                <th>Acción</th>
+              </tr>
+            </thead>
+            <tbody id="participantsTable"></tbody>
+          </table>
+          <div id="emptyList" class="empty">Todavía no hay participantes guardados.</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="sorteo" class="tab-content">
+      <div class="card">
+        <h2>Sorteo tipo tómbola</h2>
+        <p class="help">La tómbola saca primero los números al agua y luego revela la cantidad de ganadores configurada.</p>
+        <div class="btn-row">
+          <button class="btn warning" id="drawBtn" type="button">Realizar sorteo completo</button>
+          <button class="btn secondary" id="waterOnceBtn" type="button">Sacar un al agua</button>
+          <button class="btn secondary" id="winnerOnceBtn" type="button">Sacar un ganador</button>
+          <button class="btn secondary" id="clearWinnerBtn" type="button">Limpiar resultado actual</button>
+          <button class="btn danger" id="clearDrawHistoryBtn" type="button">Borrar lista de ganadores</button>
+        </div>
+
+        <div class="draw-layout">
+          <div class="tombola" id="tombolaBox">
+            <div class="draw-number" id="drawRollingNumber">--</div>
+          </div>
+
+          <div class="winner-box" id="winnerBox">
+            <p>Resultado actual</p>
+            <div class="winner-number" id="winnerNumber">--</div>
+            <h2 id="winnerName">Sin sorteo todavía</h2>
+            <p class="help" id="winnerDetails">Configura cuántos ganadores y números al agua quieres sacar.</p>
+          </div>
+        </div>
+
+        <div class="draw-results">
+          <div class="result-panel">
+            <div class="numbers-toolbar">
+              <div>
+                <h3>Lista de ganadores</h3>
+                <p class="help">Se muestra el historial de ganadores de los sorteos realizados.</p>
+              </div>
+            </div>
+            <div class="winner-list" id="winnerList"></div>
+            <div class="empty" id="emptyWinners">Aún no hay ganadores registrados.</div>
+          </div>
+
+          <div class="result-panel">
+            <h3>Números al agua</h3>
+            <p class="help">Estos números salieron aleatoriamente, pero no son ganadores.</p>
+            <div class="water-list" id="waterList"></div>
+            <div class="empty" id="emptyWater">Aún no han salido números al agua.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="configuracion" class="tab-content">
+      <div class="card">
+        <h2>Configuración de la rifa</h2>
+        <p class="help">Personaliza el nombre, cantidad de números, valor, ganadores y números al agua.</p>
+
+        <div class="settings-grid">
+          <div class="form-group">
+            <label for="raffleName">Nombre de la rifa</label>
+            <input id="raffleName" type="text" placeholder="Ej: Rifa Solidaria 2026" />
+          </div>
+          <div class="form-group">
+            <label for="totalNumbers">Cantidad total de números</label>
+            <input id="totalNumbers" type="number" min="10" max="1000" value="100" />
+          </div>
+          <div class="form-group">
+            <label for="ticketValue">Valor por número</label>
+            <input id="ticketValue" type="number" min="0" step="100" value="1000" placeholder="Ej: 1000" />
+          </div>
+          <div class="form-group">
+            <label for="winnerCount">Cantidad de ganadores</label>
+            <input id="winnerCount" type="number" min="1" max="100" value="1" />
+          </div>
+          <div class="form-group">
+            <label for="waterCount">Números al agua</label>
+            <input id="waterCount" type="number" min="0" max="500" value="0" />
+          </div>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn" id="saveSettingsBtn" type="button">Guardar configuración</button>
+          <button class="btn danger" id="resetBtn" type="button">Reiniciar toda la rifa</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="auth-overlay" id="authOverlay" hidden>
+    <form class="auth-card" id="loginForm">
+      <h2>Acceso al sistema de rifas</h2>
+      <p class="help">Ingresa con el usuario administrador creado en Firebase Authentication.</p>
+      <div class="form-group">
+        <label for="loginEmail">Correo electrónico</label>
+        <input id="loginEmail" type="email" autocomplete="username" required placeholder="admin@correo.cl" />
+      </div>
+      <div class="form-group">
+        <label for="loginPassword">Contraseña</label>
+        <input id="loginPassword" type="password" autocomplete="current-password" required placeholder="Tu contraseña" />
+      </div>
+      <button class="btn" id="loginBtn" type="submit">Entrar</button>
+      <div class="auth-error" id="loginError"></div>
+    </form>
+  </div>
+
+  <div class="toast" id="toast">Participante guardado</div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
+    import {
+      getFirestore,
+      doc,
+      getDoc,
+      setDoc,
+      onSnapshot,
+      serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
+    import {
+      getAuth,
+      onAuthStateChanged,
+      signInWithEmailAndPassword,
+      signOut
+    } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
+
+    /*
+      PEGA AQUÍ LA CONFIGURACIÓN DE TU APLICACIÓN WEB DE FIREBASE.
+      Firebase Console > Configuración del proyecto > General > Tus apps > SDK.
+    */
+    const firebaseConfig = {
+  apiKey: "AIzaSyAiw9ZFZtNPMPbfpKYRGJgkP8B9QCdaSxY",
+  authDomain: "rifa-online-12032.firebaseapp.com",
+  projectId: "rifa-online-12032",
+  storageBucket: "rifa-online-12032.firebasestorage.app",
+  messagingSenderId: "202533148482",
+  appId: "1:202533148482:web:70e1df07c78d49af455adb"
+};
+
+    const FIREBASE_DOCUMENT_PATH = ['rifas', 'rifa_principal'];
+    const FIREBASE_CONFIGURED = Boolean(
+      firebaseConfig.apiKey &&
+      firebaseConfig.projectId &&
+      !firebaseConfig.apiKey.startsWith('PEGA_AQUI') &&
+      !firebaseConfig.projectId.startsWith('PEGA_AQUI')
+    );
+
+    const STORAGE_KEY = 'rifa_online_pro_v4';
+    const OLD_STORAGE_KEYS = ['rifa_online_pro_v3', 'rifa_online_pro_v2', 'rifa_online_pro_v1'];
+
+    let state = loadState();
+    let selectedNumbers = [];
+    let winner = null;
+    let drawInterval = null;
+    let drawTimeout = null;
+    let isDrawing = false;
+    let liveDraw = {winners:[], water:[], date:''};
+    let firebaseApp = null;
+    let firestoreDb = null;
+    let firebaseAuth = null;
+    let firebaseUser = null;
+    let firebaseStateRef = null;
+    let unsubscribeFirebase = null;
+    let applyingRemoteState = false;
+    let firebaseSaveTimer = null;
+
+    const $ = selector => document.querySelector(selector);
+    const $$ = selector => document.querySelectorAll(selector);
+
+    const numberGrid = $('#numberGrid');
+    const selectedText = $('#selectedText');
+    const participantForm = $('#participantForm');
+    const participantsTable = $('#participantsTable');
+    const emptyList = $('#emptyList');
+    const searchInput = $('#search');
+    const toast = $('#toast');
+    const tombolaBox = $('#tombolaBox');
+    const drawRollingNumber = $('#drawRollingNumber');
+    const drawBtn = $('#drawBtn');
+    const waterOnceBtn = $('#waterOnceBtn');
+    const winnerOnceBtn = $('#winnerOnceBtn');
+    const winnerList = $('#winnerList');
+    const waterList = $('#waterList');
+    const emptyWinners = $('#emptyWinners');
+    const emptyWater = $('#emptyWater');
+    const firebaseStatus = $('#firebaseStatus');
+    const authOverlay = $('#authOverlay');
+    const loginForm = $('#loginForm');
+    const loginError = $('#loginError');
+    const loginBtn = $('#loginBtn');
+    const logoutBtn = $('#logoutBtn');
+
+    function setFirebaseStatus(message, type = ''){
+      firebaseStatus.textContent = message;
+      firebaseStatus.className = `firebase-status ${type}`.trim();
+    }
+
+    function createDefaultState(){
+      return {
+        raffleName:'Rifa activa',
+        totalNumbers:100,
+        ticketValue:1000,
+        winnerCount:1,
+        waterCount:0,
+        participants:[],
+        drawHistory:[]
+      };
+    }
+
+    function normalizeState(rawState){
+      const defaults = createDefaultState();
+
+      if(!rawState || typeof rawState !== 'object' || Array.isArray(rawState)){
+        return defaults;
+      }
+
+      const normalized = {
+        raffleName: typeof rawState.raffleName === 'string' && rawState.raffleName.trim()
+          ? rawState.raffleName.trim()
+          : defaults.raffleName,
+        totalNumbers: Number.isFinite(Number(rawState.totalNumbers))
+          ? Math.min(1000, Math.max(10, Math.floor(Number(rawState.totalNumbers))))
+          : defaults.totalNumbers,
+        ticketValue: Number.isFinite(Number(rawState.ticketValue))
+          ? Math.max(0, Math.floor(Number(rawState.ticketValue)))
+          : defaults.ticketValue,
+        winnerCount: Number.isFinite(Number(rawState.winnerCount))
+          ? Math.min(100, Math.max(1, Math.floor(Number(rawState.winnerCount))))
+          : defaults.winnerCount,
+        waterCount: Number.isFinite(Number(rawState.waterCount))
+          ? Math.min(500, Math.max(0, Math.floor(Number(rawState.waterCount))))
+          : defaults.waterCount,
+        participants: Array.isArray(rawState.participants)
+          ? rawState.participants
+          : [],
+        drawHistory: Array.isArray(rawState.drawHistory)
+          ? rawState.drawHistory
+          : []
+      };
+
+      normalized.participants = normalized.participants
+        .filter(p => p && typeof p === 'object')
+        .map((p, index) => {
+          const numbers = Array.isArray(p.numbers) ? p.numbers : [];
+          const cleanNumbers = [...new Set(numbers
+            .map(n => Math.floor(Number(n)))
+            .filter(n => Number.isInteger(n) && n >= 1 && n <= normalized.totalNumbers)
+          )].sort((a,b) => a - b);
+
+          return {
+            id: typeof p.id === 'string' && p.id ? p.id : `participante_${Date.now()}_${index}`,
+            name: typeof p.name === 'string' && p.name.trim() ? p.name.trim() : 'Sin nombre',
+            phone: typeof p.phone === 'string' ? p.phone.trim() : '',
+            payment: p.payment === 'Pendiente' ? 'Pendiente' : 'Pagado',
+            note: typeof p.note === 'string' ? p.note.trim() : '',
+            numbers: cleanNumbers,
+            date: typeof p.date === 'string' && p.date ? p.date : new Date().toLocaleString('es-CL')
+          };
+        })
+        .filter(p => p.numbers.length > 0);
+
+      normalized.drawHistory = normalized.drawHistory
+        .filter(draw => draw && typeof draw === 'object')
+        .map(draw => ({
+          date: typeof draw.date === 'string' && draw.date ? draw.date : new Date().toLocaleString('es-CL'),
+          winners: Array.isArray(draw.winners) ? cleanNumberList(draw.winners, normalized.totalNumbers) : [],
+          water: Array.isArray(draw.water) ? cleanNumberList(draw.water, normalized.totalNumbers) : []
+        }))
+        .filter(draw => draw.winners.length > 0 || draw.water.length > 0);
+
+      return normalized;
+    }
+
+    function cleanNumberList(list, max){
+      return [...new Set(list
+        .map(n => Math.floor(Number(n)))
+        .filter(n => Number.isInteger(n) && n >= 1 && n <= max)
+      )];
+    }
+
+    function loadState(){
+      const current = localStorage.getItem(STORAGE_KEY);
+      if(current){
+        try{
+          return normalizeState(JSON.parse(current));
+        }catch(e){
+          console.warn('No se pudo leer la información guardada actual.', e);
+        }
+      }
+
+      for(const key of OLD_STORAGE_KEYS){
+        const saved = localStorage.getItem(key);
+        if(saved){
+          try{
+            return normalizeState(JSON.parse(saved));
+          }catch(e){
+            console.warn(`No se pudo leer ${key}.`, e);
+          }
+        }
+      }
+
+      return createDefaultState();
+    }
+
+    function saveState(){
+      state = normalizeState(state);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      scheduleFirebaseSave();
+    }
+
+    function scheduleFirebaseSave(){
+      if(!FIREBASE_CONFIGURED || !firebaseStateRef || !firebaseUser || applyingRemoteState) return;
+      clearTimeout(firebaseSaveTimer);
+      firebaseSaveTimer = setTimeout(async () => {
+        try{
+          setFirebaseStatus('Guardando en Firebase...', 'connecting');
+          await setDoc(firebaseStateRef, {
+            ...normalizeState(state),
+            updatedAt:serverTimestamp(),
+            updatedBy:firebaseUser.uid
+          });
+          setFirebaseStatus(`Sincronizado · ${firebaseUser.email || 'administrador'}`, 'online');
+        }catch(error){
+          console.error('Error al guardar en Firebase:', error);
+          setFirebaseStatus('Error al guardar en Firebase', 'error');
+          showToast('No se pudo guardar en Firebase');
+        }
+      }, 350);
+    }
+
+    async function connectFirebaseState(){
+      if(!firestoreDb || !firebaseUser) return;
+
+      if(unsubscribeFirebase){
+        unsubscribeFirebase();
+        unsubscribeFirebase = null;
+      }
+
+      firebaseStateRef = doc(firestoreDb, ...FIREBASE_DOCUMENT_PATH);
+      setFirebaseStatus('Cargando datos de Firebase...', 'connecting');
+
+      try{
+        const firstSnapshot = await getDoc(firebaseStateRef);
+
+        if(firstSnapshot.exists()){
+          applyingRemoteState = true;
+          state = normalizeState(firstSnapshot.data());
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+          refreshAll();
+          applyingRemoteState = false;
+        }else{
+          await setDoc(firebaseStateRef, {
+            ...normalizeState(state),
+            createdAt:serverTimestamp(),
+            updatedAt:serverTimestamp(),
+            updatedBy:firebaseUser.uid
+          });
+        }
+
+        unsubscribeFirebase = onSnapshot(firebaseStateRef, snapshot => {
+          if(!snapshot.exists()) return;
+          const incoming = normalizeState(snapshot.data());
+          if(JSON.stringify(incoming) === JSON.stringify(normalizeState(state))) return;
+
+          applyingRemoteState = true;
+          state = incoming;
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+          refreshAll();
+          applyingRemoteState = false;
+          setFirebaseStatus(`Sincronizado · ${firebaseUser.email || 'administrador'}`, 'online');
+        }, error => {
+          console.error('Error escuchando Firebase:', error);
+          setFirebaseStatus('Sin conexión con Firestore', 'error');
+        });
+
+        setFirebaseStatus(`Sincronizado · ${firebaseUser.email || 'administrador'}`, 'online');
+      }catch(error){
+        applyingRemoteState = false;
+        console.error('Error al cargar Firebase:', error);
+        setFirebaseStatus('No se pudo abrir Firestore', 'error');
+        showToast('Revisa Firebase y sus reglas de seguridad');
+      }
+    }
+
+    function friendlyAuthError(error){
+      const code = error && error.code ? error.code : '';
+      const messages = {
+        'auth/invalid-credential':'Correo o contraseña incorrectos.',
+        'auth/invalid-email':'El correo no es válido.',
+        'auth/user-disabled':'Este usuario está deshabilitado.',
+        'auth/too-many-requests':'Demasiados intentos. Prueba más tarde.',
+        'auth/network-request-failed':'No hay conexión con Firebase.'
+      };
+      return messages[code] || 'No se pudo iniciar sesión. Revisa el correo y la contraseña.';
+    }
+
+    async function initFirebase(){
+      if(!FIREBASE_CONFIGURED){
+        setFirebaseStatus('Falta pegar la configuración de Firebase', 'connecting');
+        return;
+      }
+
+      try{
+        firebaseApp = initializeApp(firebaseConfig);
+        firestoreDb = getFirestore(firebaseApp);
+        firebaseAuth = getAuth(firebaseApp);
+
+        onAuthStateChanged(firebaseAuth, async user => {
+          firebaseUser = user;
+
+          if(user){
+            authOverlay.hidden = true;
+            logoutBtn.hidden = false;
+            loginError.textContent = '';
+            await connectFirebaseState();
+          }else{
+            firebaseStateRef = null;
+            if(unsubscribeFirebase){
+              unsubscribeFirebase();
+              unsubscribeFirebase = null;
+            }
+            logoutBtn.hidden = true;
+            authOverlay.hidden = false;
+            setFirebaseStatus('Inicia sesión para sincronizar', 'connecting');
+          }
+        });
+      }catch(error){
+        console.error('No se pudo iniciar Firebase:', error);
+        setFirebaseStatus('Configuración de Firebase inválida', 'error');
+        showToast('La configuración de Firebase es inválida');
+      }
+    }
+
+    loginForm.addEventListener('submit', async event => {
+      event.preventDefault();
+      if(!firebaseAuth){
+        loginError.textContent = 'Primero debes pegar la configuración de Firebase en el archivo.';
+        return;
+      }
+
+      const email = $('#loginEmail').value.trim();
+      const password = $('#loginPassword').value;
+      loginBtn.disabled = true;
+      loginBtn.textContent = 'Entrando...';
+      loginError.textContent = '';
+
+      try{
+        await signInWithEmailAndPassword(firebaseAuth, email, password);
+        $('#loginPassword').value = '';
+      }catch(error){
+        loginError.textContent = friendlyAuthError(error);
+      }finally{
+        loginBtn.disabled = false;
+        loginBtn.textContent = 'Entrar';
+      }
+    });
+
+    logoutBtn.addEventListener('click', async () => {
+      if(firebaseAuth) await signOut(firebaseAuth);
+    });
+
+    function getSoldNumbers(){
+      const participants = Array.isArray(state.participants) ? state.participants : [];
+      return [...new Set(participants.flatMap(p => Array.isArray(p.numbers) ? p.numbers : []))];
+    }
+
+    function getNumberOwner(number){
+      state = normalizeState(state);
+      return state.participants.find(p => p.numbers.includes(number)) || null;
+    }
+
+    function getFreeNumbers(){
+      const sold = getSoldNumbers();
+      const free = [];
+      for(let i = 1; i <= state.totalNumbers; i++){
+        if(!sold.includes(i)) free.push(i);
+      }
+      return free;
+    }
+
+    function shuffleArray(array){
+      const copy = [...array];
+      for(let i = copy.length - 1; i > 0; i--){
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function formatNumber(num){
+      return String(num).padStart(String(state.totalNumbers).length, '0');
+    }
+
+    function formatMoney(value){
+      return new Intl.NumberFormat('es-CL', {
+        style:'currency',
+        currency:'CLP',
+        maximumFractionDigits:0
+      }).format(Number(value) || 0);
+    }
+
+    function escapeHTML(text){
+      return String(text).replace(/[&<>'"]/g, char => ({
+        '&':'&amp;',
+        '<':'&lt;',
+        '>':'&gt;',
+        "'":'&#39;',
+        '"':'&quot;'
+      }[char]));
+    }
+
+    function showToast(message = 'Participante guardado'){
+      toast.textContent = message;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2300);
+    }
+
+    function setDrawControlsDisabled(disabled){
+      drawBtn.disabled = disabled;
+      waterOnceBtn.disabled = disabled;
+      winnerOnceBtn.disabled = disabled;
+    }
+
+    function renderTabs(){
+      $$('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          $$('.tab-btn').forEach(b => b.classList.remove('active'));
+          $$('.tab-content').forEach(c => c.classList.remove('active'));
+          btn.classList.add('active');
+          $('#' + btn.dataset.tab).classList.add('active');
+        });
+      });
+    }
+
+    function renderNumbers(){
+      numberGrid.innerHTML = '';
+      const sold = getSoldNumbers();
+
+      for(let i = 1; i <= state.totalNumbers; i++){
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'num';
+        btn.textContent = formatNumber(i);
+        btn.dataset.number = i;
+
+        if(sold.includes(i)){
+          const owner = getNumberOwner(i);
+          btn.classList.add(owner && owner.payment === 'Pendiente' ? 'sold-pending' : 'sold-paid');
+          btn.title = owner ? `${owner.name} - ${owner.payment}` : 'Número vendido';
+          btn.disabled = true;
+        }
+
+        if(selectedNumbers.includes(i)){
+          btn.classList.add('selected');
+        }
+
+        btn.addEventListener('click', () => toggleNumber(i));
+        numberGrid.appendChild(btn);
+      }
+
+      renderSelected();
+    }
+
+    function toggleNumber(num){
+      if(getSoldNumbers().includes(num)) return;
+
+      if(selectedNumbers.includes(num)){
+        selectedNumbers = selectedNumbers.filter(n => n !== num);
+      }else{
+        selectedNumbers.push(num);
+        selectedNumbers.sort((a,b) => a - b);
+      }
+      renderNumbers();
+    }
+
+    function renderSelected(){
+      if(selectedNumbers.length === 0){
+        selectedText.textContent = 'Ningún número seleccionado';
+        return;
+      }
+      selectedText.textContent = selectedNumbers.map(formatNumber).join(', ');
+    }
+
+    function renderStats(){
+      state = normalizeState(state);
+      const sold = getSoldNumbers().length;
+      $('#stTotal').textContent = state.totalNumbers;
+      $('#stSold').textContent = sold;
+      $('#stFree').textContent = Math.max(0, state.totalNumbers - sold);
+      $('#stPeople').textContent = state.participants.length;
+      $('#stValue').textContent = formatMoney(state.ticketValue);
+      $('#stRevenue').textContent = formatMoney(sold * state.ticketValue);
+      $('#raffleNameBadge').textContent = state.raffleName || 'Rifa activa';
+      $('#raffleName').value = state.raffleName || '';
+      $('#totalNumbers').value = state.totalNumbers;
+      $('#ticketValue').value = state.ticketValue;
+      $('#winnerCount').value = state.winnerCount;
+      $('#waterCount').value = state.waterCount;
+    }
+
+    function renderParticipants(filter = ''){
+      const query = String(filter || '').trim().toLowerCase();
+      participantsTable.innerHTML = '';
+      state = normalizeState(state);
+
+      const filtered = state.participants.filter(p => {
+        const numberText = p.numbers.map(formatNumber).join(' ');
+        return !query ||
+          p.name.toLowerCase().includes(query) ||
+          p.phone.toLowerCase().includes(query) ||
+          p.payment.toLowerCase().includes(query) ||
+          numberText.includes(query);
+      });
+
+      emptyList.style.display = filtered.length ? 'none' : 'block';
+
+      filtered.forEach((p, index) => {
+        const tr = document.createElement('tr');
+        const statusClass = p.payment === 'Pendiente' ? 'pending' : 'paid';
+        tr.className = p.payment === 'Pendiente' ? 'row-pending' : 'row-paid';
+        tr.innerHTML = `
+          <td>${index + 1}</td>
+          <td><strong>${escapeHTML(p.name)}</strong><br><small>${escapeHTML(p.note || '')}</small></td>
+          <td>${escapeHTML(p.phone || 'No registrado')}</td>
+          <td>${p.numbers.map(n => `<span class="chip ${statusClass}">${formatNumber(n)}</span>`).join('')}</td>
+          <td>
+            <select class="status-select ${statusClass}" data-action="change-payment" data-id="${escapeHTML(p.id)}">
+              <option value="Pagado" ${p.payment === 'Pagado' ? 'selected' : ''}>✅ Pagado</option>
+              <option value="Pendiente" ${p.payment === 'Pendiente' ? 'selected' : ''}>⏳ Pendiente</option>
+            </select>
+          </td>
+          <td><strong>${formatMoney(p.numbers.length * state.ticketValue)}</strong></td>
+          <td>${escapeHTML(p.date)}</td>
+          <td><button class="btn danger" data-action="delete-participant" data-id="${escapeHTML(p.id)}" type="button">Eliminar</button></td>
+        `;
+        participantsTable.appendChild(tr);
+      });
+    }
+
+    function renderDrawLists(source = null){
+      const history = source ? [source] : state.drawHistory;
+      winnerList.innerHTML = '';
+      waterList.innerHTML = '';
+
+      let winnerCount = 0;
+      let waterCount = 0;
+
+      history.forEach((draw, drawIndex) => {
+        const drawLabel = source ? 'Sorteo actual' : `Sorteo #${history.length - drawIndex}`;
+
+        if(draw.winners && draw.winners.length){
+          draw.winners.forEach((number, index) => {
+            const owner = getNumberOwner(number);
+            const div = document.createElement('div');
+            div.className = 'winner-card';
+            div.innerHTML = `
+              <strong>${drawLabel} · Ganador ${index + 1}: <span class="chip winner">${formatNumber(number)}</span></strong>
+              <small>${owner ? escapeHTML(owner.name) : 'Participante no encontrado'} · ${owner ? escapeHTML(owner.phone || 'Sin teléfono') : ''}</small>
+              <small>Estado: ${owner ? owner.payment : 'No disponible'} · Fecha: ${escapeHTML(draw.date || '')}</small>
+            `;
+            winnerList.appendChild(div);
+            winnerCount++;
+          });
+        }
+
+        if(draw.water && draw.water.length){
+          const dateSpan = document.createElement('span');
+          dateSpan.className = 'chip water';
+          dateSpan.textContent = drawLabel;
+          waterList.appendChild(dateSpan);
+
+          draw.water.forEach(number => {
+            const span = document.createElement('span');
+            span.className = 'chip water';
+            span.textContent = formatNumber(number);
+            waterList.appendChild(span);
+            waterCount++;
+          });
+        }
+      });
+
+      emptyWinners.style.display = winnerCount ? 'none' : 'block';
+      emptyWater.style.display = waterCount ? 'none' : 'block';
+    }
+
+    function clearForm(){
+      participantForm.reset();
+      $('#payment').value = 'Pagado';
+      selectedNumbers = [];
+      renderNumbers();
+      $('#name').focus();
+    }
+
+    function getSafeId(){
+      if(window.crypto && typeof window.crypto.randomUUID === 'function'){
+        return window.crypto.randomUUID();
+      }
+      return `participante_${Date.now()}_${Math.random().toString(16).slice(2)}`;
+    }
+
+    function deleteParticipant(id){
+      state = normalizeState(state);
+      const cleanId = String(id || '');
+      const participant = state.participants.find(p => p.id === cleanId);
+      if(!participant){
+        showToast('No se encontró el participante');
+        return;
+      }
+
+      const ok = confirm(`¿Eliminar a ${participant.name} y liberar sus números?`);
+      if(!ok) return;
+
+      state.participants = state.participants.filter(p => p.id !== cleanId);
+      saveState();
+      selectedNumbers = [];
+      clearWinner();
+      refreshAll();
+      showToast('Participante eliminado');
+    }
+
+    function updatePaymentStatus(id, newPayment){
+      state = normalizeState(state);
+      const cleanId = String(id || '');
+      const participant = state.participants.find(p => p.id === cleanId);
+      if(!participant){
+        showToast('No se encontró el participante');
+        refreshAll();
+        return;
+      }
+
+      participant.payment = newPayment === 'Pendiente' ? 'Pendiente' : 'Pagado';
+      saveState();
+      refreshAll();
+      showToast(`Estado cambiado a ${participant.payment}`);
+    }
+
+    function resetRaffle(){
+      const ok = confirm('¿Seguro que deseas reiniciar toda la rifa? Se eliminarán participantes, números vendidos, ganadores y configuración.');
+      if(!ok) return;
+      localStorage.removeItem(STORAGE_KEY);
+      OLD_STORAGE_KEYS.forEach(key => localStorage.removeItem(key));
+      state = createDefaultState();
+      selectedNumbers = [];
+      winner = null;
+      liveDraw = {winners:[], water:[], date:''};
+      clearWinner();
+      saveState();
+      refreshAll();
+      showToast('Rifa reiniciada');
+    }
+
+    function clearParticipantsTable(){
+      state = normalizeState(state);
+      if(state.participants.length === 0){
+        showToast('La tabla ya está vacía');
+        return;
+      }
+      const ok = confirm('¿Vaciar la tabla de participantes y liberar todos los números? Se conserva la configuración, pero se borra la lista de ganadores.');
+      if(!ok) return;
+      state.participants = [];
+      state.drawHistory = [];
+      selectedNumbers = [];
+      winner = null;
+      liveDraw = {winners:[], water:[], date:''};
+      clearWinner();
+      saveState();
+      refreshAll();
+      showToast('Tabla reiniciada');
+    }
+
+    function clearDrawHistory(){
+      state = normalizeState(state);
+      if(state.drawHistory.length === 0){
+        showToast('No hay ganadores para borrar');
+        return;
+      }
+      const ok = confirm('¿Borrar la lista de ganadores y números al agua? Los participantes no se eliminan.');
+      if(!ok) return;
+      state.drawHistory = [];
+      liveDraw = {winners:[], water:[], date:''};
+      saveState();
+      clearWinner();
+      refreshAll();
+      showToast('Lista de ganadores borrada');
+    }
+
+    participantForm.addEventListener('submit', e => {
+      e.preventDefault();
+      state = normalizeState(state);
+
+      const name = $('#name').value.trim();
+      const phone = $('#phone').value.trim();
+      const payment = $('#payment').value;
+      const note = $('#note').value.trim();
+
+      if(!name){
+        showToast('Escribe el nombre del participante');
+        return;
+      }
+
+      if(selectedNumbers.length === 0){
+        showToast('Selecciona al menos un número');
+        return;
+      }
+
+      const sold = getSoldNumbers();
+      const duplicated = selectedNumbers.find(n => sold.includes(n));
+      if(duplicated){
+        showToast(`El número ${formatNumber(duplicated)} ya fue vendido`);
+        renderNumbers();
+        return;
+      }
+
+      const participant = {
+        id:getSafeId(),
+        name,
+        phone,
+        payment,
+        note,
+        numbers:[...selectedNumbers],
+        date:new Date().toLocaleString('es-CL')
+      };
+
+      state.participants.push(participant);
+      saveState();
+      clearForm();
+      refreshAll();
+      showToast('Participante guardado');
+    });
+
+    participantsTable.addEventListener('click', e => {
+      const btn = e.target.closest('[data-action="delete-participant"]');
+      if(!btn) return;
+      deleteParticipant(btn.dataset.id);
+    });
+
+    participantsTable.addEventListener('change', e => {
+      const select = e.target.closest('[data-action="change-payment"]');
+      if(!select) return;
+      updatePaymentStatus(select.dataset.id, select.value);
+    });
+
+    $('#clearSelectionBtn').addEventListener('click', () => {
+      selectedNumbers = [];
+      renderNumbers();
+      showToast('Selección limpiada');
+    });
+
+    $('#selectRandomBtn').addEventListener('click', () => {
+      const free = getFreeNumbers();
+      if(free.length === 0){
+        showToast('No hay números disponibles');
+        return;
+      }
+      const random = free[Math.floor(Math.random() * free.length)];
+      if(!selectedNumbers.includes(random)) selectedNumbers.push(random);
+      selectedNumbers.sort((a,b) => a - b);
+      renderNumbers();
+    });
+
+    $('#selectFreeBtn').addEventListener('click', () => {
+      const amount = prompt('¿Cuántos números libres quieres seleccionar?', '5');
+      const qty = Number(amount);
+      if(!qty || qty < 1) return;
+
+      const free = getFreeNumbers().filter(n => !selectedNumbers.includes(n));
+      selectedNumbers = [...selectedNumbers, ...free.slice(0, qty)].sort((a,b) => a - b);
+      renderNumbers();
+    });
+
+    searchInput.addEventListener('input', () => renderParticipants(searchInput.value));
+
+    $('#saveSettingsBtn').addEventListener('click', () => {
+      state = normalizeState(state);
+      const newName = $('#raffleName').value.trim() || 'Rifa activa';
+      const newTotal = Number($('#totalNumbers').value);
+      const newValue = Number($('#ticketValue').value);
+      const newWinnerCount = Number($('#winnerCount').value);
+      const newWaterCount = Number($('#waterCount').value);
+      const maxSold = Math.max(0, ...getSoldNumbers());
+
+      if(!newTotal || newTotal < 10 || newTotal > 1000){
+        showToast('Usa una cantidad entre 10 y 1000');
+        return;
+      }
+
+      if(newTotal < maxSold){
+        showToast(`No puedes bajar de ${maxSold}, ya hay números vendidos`);
+        return;
+      }
+
+      if(!Number.isFinite(newValue) || newValue < 0){
+        showToast('Ingresa un valor por número válido');
+        return;
+      }
+
+      if(!Number.isFinite(newWinnerCount) || newWinnerCount < 1 || newWinnerCount > 100){
+        showToast('La cantidad de ganadores debe estar entre 1 y 100');
+        return;
+      }
+
+      if(!Number.isFinite(newWaterCount) || newWaterCount < 0 || newWaterCount > 500){
+        showToast('Los números al agua deben estar entre 0 y 500');
+        return;
+      }
+
+      state.raffleName = newName;
+      state.totalNumbers = Math.floor(newTotal);
+      state.ticketValue = Math.floor(newValue);
+      state.winnerCount = Math.floor(newWinnerCount);
+      state.waterCount = Math.floor(newWaterCount);
+      saveState();
+      selectedNumbers = selectedNumbers.filter(n => n <= state.totalNumbers);
+      refreshAll();
+      showToast('Configuración guardada');
+    });
+
+    $('#resetBtn').addEventListener('click', resetRaffle);
+    $('#clearTableBtn').addEventListener('click', clearParticipantsTable);
+    $('#clearDrawHistoryBtn').addEventListener('click', clearDrawHistory);
+    waterOnceBtn.addEventListener('click', () => drawSingleResult('water'));
+    winnerOnceBtn.addEventListener('click', () => drawSingleResult('winner'));
+
+    function drawSingleResult(type){
+      if(isDrawing) return;
+      state = normalizeState(state);
+      const soldNumbers = getSoldNumbers();
+      if(soldNumbers.length === 0){
+        showToast('No hay números vendidos para sortear');
+        return;
+      }
+
+      if(!liveDraw.date){
+        liveDraw.date = new Date().toLocaleString('es-CL');
+      }
+
+      const usedInCurrentDraw = [...liveDraw.water, ...liveDraw.winners];
+      const available = soldNumbers.filter(number => !usedInCurrentDraw.includes(number));
+      if(available.length === 0){
+        showToast('No quedan números disponibles en este sorteo actual');
+        return;
+      }
+
+      const pickedNumber = available[Math.floor(Math.random() * available.length)];
+      const isWater = type === 'water';
+
+      isDrawing = true;
+      setDrawControlsDisabled(true);
+      tombolaBox.classList.add('spinning');
+      drawRollingNumber.classList.toggle('water-mode', isWater);
+      drawRollingNumber.classList.toggle('winner-mode', !isWater);
+      $('#winnerNumber').textContent = '--';
+      $('#winnerName').textContent = isWater ? 'Sacando un número al agua...' : 'Sacando un ganador...';
+      $('#winnerDetails').textContent = 'La tómbola está girando.';
+
+      drawInterval = setInterval(() => {
+        const rolling = soldNumbers[Math.floor(Math.random() * soldNumbers.length)];
+        drawRollingNumber.textContent = formatNumber(rolling);
+      }, 70);
+
+      drawTimeout = setTimeout(() => {
+        clearInterval(drawInterval);
+        drawInterval = null;
+        drawTimeout = null;
+        tombolaBox.classList.remove('spinning');
+        drawRollingNumber.textContent = formatNumber(pickedNumber);
+        $('#winnerNumber').textContent = formatNumber(pickedNumber);
+
+        if(isWater){
+          liveDraw.water.push(pickedNumber);
+          $('#winnerName').textContent = 'Número al agua';
+          $('#winnerDetails').textContent = `El número ${formatNumber(pickedNumber)} salió al agua y no gana.`;
+          renderDrawLists(liveDraw);
+        }else{
+          const owner = getNumberOwner(pickedNumber);
+          liveDraw.winners.push(pickedNumber);
+          $('#winnerName').textContent = owner ? owner.name : 'Participante no encontrado';
+          $('#winnerDetails').textContent = `Ganador: número ${formatNumber(pickedNumber)} · ${owner ? owner.payment : 'Estado no disponible'}`;
+
+          state.drawHistory.unshift({
+            date:liveDraw.date || new Date().toLocaleString('es-CL'),
+            winners:[pickedNumber],
+            water:[...liveDraw.water]
+          });
+          winner = {
+            numbers:[pickedNumber],
+            water:[...liveDraw.water],
+            date:liveDraw.date
+          };
+          liveDraw = {winners:[], water:[], date:''};
+          saveState();
+          renderDrawLists();
+        }
+
+        drawRollingNumber.classList.remove('water-mode', 'winner-mode');
+        setDrawControlsDisabled(false);
+        isDrawing = false;
+        showToast(isWater ? 'Número al agua seleccionado' : 'Ganador seleccionado');
+      }, isWater ? 1200 : 1500);
+    }
+
+    drawBtn.addEventListener('click', () => {
+      if(isDrawing) return;
+      state = normalizeState(state);
+      const soldNumbers = getSoldNumbers();
+      if(soldNumbers.length === 0){
+        showToast('No hay números vendidos para sortear');
+        return;
+      }
+
+      const result = buildDrawResult(soldNumbers);
+      if(result.events.length === 0){
+        showToast('No hay suficientes números para sortear');
+        return;
+      }
+
+      isDrawing = true;
+      setDrawControlsDisabled(true);
+      drawBtn.textContent = 'Girando tómbola...';
+      liveDraw = {winners:[], water:[], date:result.date};
+      renderDrawLists(liveDraw);
+      $('#winnerNumber').textContent = '--';
+      $('#winnerName').textContent = 'La tómbola está girando...';
+      $('#winnerDetails').textContent = 'Primero saldrán los números al agua y luego los ganadores.';
+
+      animateDrawEvent(result, 0, soldNumbers);
+    });
+
+    function buildDrawResult(soldNumbers){
+      const shuffled = shuffleArray(soldNumbers);
+      const winnersLimit = Math.min(state.winnerCount, shuffled.length);
+      const winners = shuffled.slice(0, winnersLimit);
+      const remaining = shuffled.filter(number => !winners.includes(number));
+      const waterLimit = Math.min(state.waterCount, remaining.length);
+      const water = shuffleArray(remaining).slice(0, waterLimit);
+      const events = [
+        ...water.map((number, index) => ({type:'water', number, label:`Al agua ${index + 1}`})),
+        ...winners.map((number, index) => ({type:'winner', number, label:`Ganador ${index + 1}`}))
+      ];
+
+      return {
+        date:new Date().toLocaleString('es-CL'),
+        winners,
+        water,
+        events
+      };
+    }
+
+    function animateDrawEvent(result, index, soldNumbers){
+      if(index >= result.events.length){
+        finishMultiDraw(result);
+        return;
+      }
+
+      const event = result.events[index];
+      const isWater = event.type === 'water';
+      drawRollingNumber.classList.toggle('water-mode', isWater);
+      drawRollingNumber.classList.toggle('winner-mode', !isWater);
+      tombolaBox.classList.add('spinning');
+      $('#winnerName').textContent = isWater ? 'Sacando número al agua...' : 'Sacando ganador...';
+      $('#winnerDetails').textContent = `${event.label} de ${result.events.length}.`;
+
+      const start = Date.now();
+      const duration = isWater ? 1050 : 1450;
+
+      drawInterval = setInterval(() => {
+        const rolling = soldNumbers[Math.floor(Math.random() * soldNumbers.length)];
+        drawRollingNumber.textContent = formatNumber(rolling);
+      }, 70);
+
+      drawTimeout = setTimeout(() => {
+        clearInterval(drawInterval);
+        drawInterval = null;
+        tombolaBox.classList.remove('spinning');
+        drawRollingNumber.textContent = formatNumber(event.number);
+        $('#winnerNumber').textContent = formatNumber(event.number);
+
+        if(isWater){
+          liveDraw.water.push(event.number);
+          $('#winnerName').textContent = 'Número al agua';
+          $('#winnerDetails').textContent = `El número ${formatNumber(event.number)} salió al agua y no gana.`;
+        }else{
+          const owner = getNumberOwner(event.number);
+          liveDraw.winners.push(event.number);
+          $('#winnerName').textContent = owner ? owner.name : 'Participante no encontrado';
+          $('#winnerDetails').textContent = `${event.label}: número ${formatNumber(event.number)} · ${owner ? owner.payment : 'Estado no disponible'}`;
+        }
+
+        renderDrawLists(liveDraw);
+        drawTimeout = setTimeout(() => animateDrawEvent(result, index + 1, soldNumbers), 650);
+      }, duration);
+    }
+
+    function finishMultiDraw(result){
+      clearInterval(drawInterval);
+      clearTimeout(drawTimeout);
+      drawInterval = null;
+      drawTimeout = null;
+      tombolaBox.classList.remove('spinning');
+      drawRollingNumber.classList.remove('water-mode', 'winner-mode');
+      setDrawControlsDisabled(false);
+      drawBtn.textContent = 'Realizar sorteo completo';
+      isDrawing = false;
+
+      state.drawHistory.unshift({
+        date:result.date,
+        winners:result.winners,
+        water:result.water
+      });
+      saveState();
+      renderDrawLists();
+
+      const firstWinner = result.winners[0];
+      const firstOwner = getNumberOwner(firstWinner);
+      winner = {
+        numbers:result.winners,
+        water:result.water,
+        date:result.date
+      };
+
+      $('#winnerNumber').textContent = result.winners.length ? formatNumber(firstWinner) : '--';
+      $('#winnerName').textContent = result.winners.length === 1
+        ? (firstOwner ? firstOwner.name : 'Ganador no encontrado')
+        : `Sorteo finalizado: ${result.winners.length} ganadores`;
+      $('#winnerDetails').textContent = `Números al agua: ${result.water.length} · Ganadores: ${result.winners.length} · Fecha: ${result.date}`;
+      showToast('Sorteo realizado');
+    }
+
+    $('#clearWinnerBtn').addEventListener('click', clearWinner);
+
+    function clearWinner(){
+      if(drawInterval){
+        clearInterval(drawInterval);
+        drawInterval = null;
+      }
+      if(drawTimeout){
+        clearTimeout(drawTimeout);
+        drawTimeout = null;
+      }
+      isDrawing = false;
+      tombolaBox.classList.remove('spinning');
+      drawRollingNumber.classList.remove('water-mode', 'winner-mode');
+      drawBtn.disabled = false;
+      drawBtn.textContent = 'Realizar sorteo';
+      winner = null;
+      liveDraw = {winners:[], water:[], date:''};
+      drawRollingNumber.textContent = '--';
+      $('#winnerNumber').textContent = '--';
+      $('#winnerName').textContent = 'Sin sorteo todavía';
+      $('#winnerDetails').textContent = 'Configura cuántos ganadores y números al agua quieres sacar.';
+      renderDrawLists();
+    }
+
+    $('#exportBtn').addEventListener('click', () => {
+      state = normalizeState(state);
+      if(state.participants.length === 0){
+        showToast('No hay datos para exportar');
+        return;
+      }
+
+      const rows = [
+        ['Nombre','Teléfono','Números','Pago','Total','Observación','Fecha'],
+        ...state.participants.map(p => [
+          p.name,
+          p.phone,
+          p.numbers.map(formatNumber).join(' - '),
+          p.payment,
+          p.numbers.length * state.ticketValue,
+          p.note,
+          p.date
+        ])
+      ];
+
+      const csv = rows.map(row => row.map(value => `"${String(value).replaceAll('"','""')}"`).join(',')).join('\n');
+      const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'participantes_rifa.csv';
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+
+    $('#printBtn').addEventListener('click', () => window.print());
+
+    function refreshAll(){
+      state = normalizeState(state);
+      saveState();
+      renderStats();
+      renderNumbers();
+      renderParticipants(searchInput.value || '');
+      renderDrawLists();
+    }
+
+    function runInternalTests(){
+      const tests = [];
+
+      tests.push({
+        name:'normalizeState crea participants vacío si falta',
+        pass:Array.isArray(normalizeState({raffleName:'Prueba', totalNumbers:50}).participants)
+      });
+
+      tests.push({
+        name:'normalizeState crea estado por defecto si recibe null',
+        pass:Array.isArray(normalizeState(null).participants) && normalizeState(null).totalNumbers === 100
+      });
+
+      tests.push({
+        name:'normalizeState agrega valor por número si falta',
+        pass:normalizeState({raffleName:'Prueba', totalNumbers:50}).ticketValue === 1000
+      });
+
+      tests.push({
+        name:'normalizeState acepta valor por número válido',
+        pass:normalizeState({raffleName:'Prueba', totalNumbers:50, ticketValue:2500}).ticketValue === 2500
+      });
+
+      tests.push({
+        name:'normalizeState agrega configuración de ganadores y agua',
+        pass:normalizeState({winnerCount:3, waterCount:5}).winnerCount === 3 && normalizeState({winnerCount:3, waterCount:5}).waterCount === 5
+      });
+
+      tests.push({
+        name:'normalizeState limpia números inválidos',
+        pass:normalizeState({totalNumbers:10, participants:[{name:'Ana', numbers:[1, 2, 99, 'x']}]}).participants[0].numbers.join(',') === '1,2'
+      });
+
+      tests.push({
+        name:'normalizeState conserva participante pendiente',
+        pass:normalizeState({participants:[{name:'Luis', payment:'Pendiente', numbers:[3]}]}).participants[0].payment === 'Pendiente'
+      });
+
+      tests.push({
+        name:'getSoldNumbers no falla con participants undefined',
+        pass:(() => {
+          const backup = state;
+          state = {raffleName:'Test', totalNumbers:20};
+          try{
+            return Array.isArray(getSoldNumbers()) && getSoldNumbers().length === 0;
+          }catch(e){
+            return false;
+          }finally{
+            state = backup;
+          }
+        })()
+      });
+
+      tests.push({
+        name:'buildDrawResult no repite ganadores ni agua',
+        pass:(() => {
+          const backup = state;
+          state = normalizeState({winnerCount:2, waterCount:2, participants:[{name:'A', numbers:[1,2,3,4,5]}]});
+          const result = buildDrawResult([1,2,3,4,5]);
+          const all = [...result.winners, ...result.water];
+          const unique = [...new Set(all)];
+          state = backup;
+          return all.length === unique.length && result.winners.length === 2 && result.water.length === 2;
+        })()
+      });
+
+      tests.push({
+        name:'sorteo individual puede separar un al agua y un ganador',
+        pass:(() => {
+          const sold = [1,2];
+          const temporaryLiveDraw = {water:[1], winners:[], date:'test'};
+          const available = sold.filter(number => ![...temporaryLiveDraw.water, ...temporaryLiveDraw.winners].includes(number));
+          return available.length === 1 && available[0] === 2;
+        })()
+      });
+
+      tests.push({
+        name:'formatMoney devuelve moneda chilena',
+        pass:formatMoney(1000).includes('$')
+      });
+
+      console.group('Pruebas internas del Sistema de Rifa');
+      tests.forEach(test => console[test.pass ? 'log' : 'error'](`${test.pass ? '✅' : '❌'} ${test.name}`));
+      console.groupEnd();
+    }
+
+    renderTabs();
+    runInternalTests();
+    refreshAll();
+    initFirebase();
+  </script>
+</body>
+</html>
