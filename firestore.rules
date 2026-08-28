@@ -1,0 +1,11 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /rifas/{rifaId} {
+      // La página pública necesita leer el estado en tiempo real.
+      allow read: if true;
+      // Solo el administrador autenticado puede modificar directamente desde admin.html.
+      allow write: if request.auth != null;
+    }
+  }
+}
