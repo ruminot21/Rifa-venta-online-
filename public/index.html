@@ -9,7 +9,7 @@
 <script type="module">
 import {initializeApp} from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js';
 import {getFirestore,doc,onSnapshot} from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js';
-const firebaseConfig={apiKey:'AIzaSyAiw9ZFZtNPMPbfpKYRGJgkP8B9QCdaSxY',authDomain:'rifa-online-12032.firebaseapp.com',projectId:'rifa-online-12032',storageBucket:'rifa-online-12032.firebasestorage.app',messagingSenderId:'202533148482',appId:'1:202533148482:web:70e1df07c78d49af455adb'};
+const firebaseConfig={apiKey:"AIzaSyAiw9ZFZtNPMPbfpKYRGJgkP8B9QCdaSxY",authDomain:'rifa-online-12032.firebaseapp.com',projectId:'rifa-online-12032',storageBucket:'rifa-online-12032.firebasestorage.app',messagingSenderId:'202533148482',appId:'1:202533148482:web:70e1df07c78d49af455adb'};
 const db=getFirestore(initializeApp(firebaseConfig)); const ref=doc(db,'rifas','rifa_principal'); let state={totalNumbers:100,ticketValue:1000,raffleName:'Rifa Online',participants:[],prizeImages:[],prizeVideo:''}; let selected=[];let mediaIndex=0;
 const money=n=>new Intl.NumberFormat('es-CL',{style:'currency',currency:'CLP',maximumFractionDigits:0}).format(n);
 const pad=n=>String(n).padStart(3,'0');
